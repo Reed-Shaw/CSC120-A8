@@ -10,46 +10,125 @@ public class Game implements Contract{
     //player's size
     protected String size;
     //player's location
-    protected int placeNorth;
-    protected int placeEast;
-    protected int placeSouth;
-    protected int placeWest;
+    protected int placeX;
+    protected int placeY;
+    protected Location currentLocation;
+    //Boolean describing is the game is still going. 
     private boolean playingGame = true;
-
+    //making an ArrayList of all the places
+    Location forest = new Location("Forest", "A large forest. Next to you is a rusty key.", 0, 0); 
+    Location desert = new Location("Desert", "An expansive desert. Next to you is a blue potion.", 0, 1);
+    Location beach = new Location("Beach", "A pretty beach. Next to you is a golden potion.", 1, 1);
+    Location cliffs = new Location("Cliffs", "Rocky cliffs streaching as far as the eye can see. Next to you is box.", 1, 0);
+    protected ArrayList<Location> places;
+    
     public Game(){
         this.inventory = new ArrayList<Item>();
         this.energy = 10;
         this.size = "medium";
-        this.placeNorth = 0;
-        this.placeEast = 0;
-        this.placeSouth = 0;
-        this.placeWest = 0;
+        this.placeX = 0;
+        this.placeY = 0;
+        this.places = new ArrayList<Location>();
+        this.places.add(forest);
+        this.places.add(desert);
+        this.places.add(beach);
+        this.places.add(cliffs);
+
+        
     }
 
     /**
-     * a method allowing the player to move north east south or west. 
+     * a method allowing the player to move north east south or west. When they successfully move, they get a
+     * description of where they are and their currentLocation changes. 
      * @param direction a string saying either "North", "East", "South", or "West".
      */
     public boolean walk(String direction){
         if(direction.contains("NORTH")){
-            this.placeNorth += 1;
+            if(this.placeY >= 1){
+                System.out.println("You can't go North from here.");
+                return false;
+            }
+            else{
+            this.placeY += 1;
             System.out.println("You walked north");
+            }
+            if(this.placeX == beach.getX() && this.placeY == beach.getY()){
+                currentLocation = beach;
+                System.out.println("You are at a " + beach.getName() + ". " + beach.getDesc());
+            }
+            else if(this.placeX == desert.getX() && this.placeY == desert.getY()){
+                currentLocation = desert;
+                System.out.println("You are at a " + desert.getName() + ". " + desert.getDesc());
+            }
             return true;
+            
         }
         else if(direction.contains("EAST")){
-            this.placeEast += 1;
+            if(this.placeX >= 1){
+                System.out.println("You can't go east from here.");
+                return false;
+            }
+            else{
+            this.placeX += 1;
             System.out.println("You walked east");
+            }
+            if(this.placeX == beach.getX() && this.placeY == beach.getY()){
+                currentLocation = beach;
+                System.out.println("You are at a " + beach.getName() + ". " + beach.getDesc());
+            }
+            else if(this.placeX == cliffs.getX() && this.placeY == cliffs.getY()){
+                currentLocation = cliffs;
+                System.out.println("You are at the " + cliffs.getName() + ". " + cliffs.getDesc());
+            }
+            else{
+                System.out.println("Nothing matches.");
+            }
             return true;
+
         }
         else if(direction.contains("SOUTH")){
-            this.placeSouth += 1;
+            if(this.placeY <= 0){
+                System.out.println("You can't go south from here.");
+                return false;
+            }
+            else{
+            this.placeY -= 1;
             System.out.println("You wallked south.");
+            }
+            if(this.placeX == forest.getX() && this.placeY == forest.getY()){
+                currentLocation = forest;
+                System.out.println("You are at a " + forest.getName() + ". " + forest.getDesc());
+            }
+            else if(this.placeX == cliffs.getX() && this.placeY == cliffs.getY()){
+                currentLocation = cliffs;
+                System.out.println("You are at the " + cliffs.getName() + ". " + cliffs.getDesc());
+            }
+            else{
+                System.out.println("Nothing matches.");
+            }
             return true;
         }
         else if(direction.contains("WEST")){
-            this.placeWest += 1;
+            if(this.placeX <= 0){
+                System.out.println("You can't go west from here.");
+                return false;
+            }
+            else{
+            this.placeX -= 1;
             System.out.println("You walked west.");
-            return true;
+            }
+            if(this.placeX == forest.getX() && this.placeY == forest.getY()){
+                currentLocation = forest;
+                System.out.println("You are at a " + forest.getName() + ". " + forest.getDesc());
+            }
+            else if(this.placeX == desert.getX() && this.placeY == desert.getY()){
+                currentLocation = desert;
+                System.out.println("You are at the " + desert.getName() + ". " + desert.getDesc());
+            }
+            else{
+                System.out.println("Nothing matches.");
+            }
+            return true; 
         }
         else{
             System.out.println("That wasn't a valid direction. Trying writing \"NORTH\", \"EAST\", \"SOUTH\", or \"WEST\".");
@@ -58,7 +137,17 @@ public class Game implements Contract{
     }
 
     public void grab(String item){
-        System.out.println(item + " was grabbed.");
+        for(Item object : currentLocation.getInventory()){
+            if(item.contains("gold potion") && object == potionGrow){
+
+                this.inventory.add(object);
+                this.printInventory();
+            }
+        }
+    }
+
+    public ArrayList<Item> printInventory(){
+        return inventory;
     }
 
     public String drop(String item){
@@ -66,23 +155,65 @@ public class Game implements Contract{
     }
 
     public void use(String item){
-        System.out.println("use item.");
+        for(Item object : this.inventory){
+            if(item.contains(object.getName())){
+                if(item.contains("Grow")){
+                    this.grow();
+                }
+                else if(item.contains("Shrink")){
+                    this.shrink();
+                }
+                else if(item.contains("Key") && this.placeX == 1 && this.placeY == 0){
+                    System.out.println("Opening the box reveals a pair of wings.");
+
+                }
+                else{
+                    System.out.println("Make sure you GRAB the item before you use it.");
+                }
+            }
+        }
     }
 
     public void examine(String item){
-        System.out.println("examine item.");
+        for(Item object : this.inventory){
+            if(item.contains(object.getName())){
+                System.out.println(object.getDesc());
+            }
+            else{
+                System.out.println("That item is not in your inventory. Make sure you've grabbed it before examining.");
+            }
+        }
     }
 
     public boolean fly(int x, int y){
+
         return true;
     }
 
     public Number shrink(){
-        return 1;
+        if(this.size == "big"){
+            this.size = "medium";
+            System.out.println("You are medium sized.");
+            return 2;
+        }
+        else{
+            this.size = "small";
+            System.out.println("You are small sized.");
+            return 1;
+        }
     }
 
     public Number grow(){
-        return 3;
+        if(this.size == "small"){
+            this.size = "medium";
+            System.out.println("You are medium sized.");
+            return 2;
+        }
+        else{
+            this.size = "big";
+            System.out.println("You are large sized.");
+            return 3;
+        }
     }
 
     public void rest(){
@@ -114,12 +245,6 @@ public class Game implements Contract{
         else if(action.contains("USE")){
             this.use(action);
         }
-        else if(action.contains("SHRINK")){
-            this.shrink();
-        }
-        else if(action.contains("GROW")){
-            this.grow();
-        }
         else if (action.contains("REST")){
             this.rest();
         }
@@ -133,6 +258,24 @@ public class Game implements Contract{
 
     public void play(){
         Scanner sc = new Scanner(System.in);
+        Item potionGrow = new Item("Potion", "A glittering gold potion. A note attatched to it says \"BIG CHANGES\".", true, 1);
+        Item potionShrink = new Item("Potion", "A foggy blue potion. A note attatched to it says \"little changes\".", true, 1);
+        Item wings = new Item("Wings", "Like what Icarus had, but with altitude control.", false, 0);
+        Item rustyKey = new Item("Rusty Key", "A rusty key. Maybe it goes with a box?", false, 0);
+        for(Location place : places){
+            if("forest".contains(place.getName())){
+                place.addItem(rustyKey);
+            }
+            if("desert".contains(place.getName())){
+                place.addItem(potionShrink);
+            }
+            if("cliffs".contains(place.getName())){
+                place.addItem(wings);
+            }
+            if("beach".contains(place.getName())){
+                place.addItem(potionGrow);
+            }
+        }
         do{
             if(this.energy == 0){
                 System.out.println("You are too tired to do anything. You should REST.");
@@ -144,6 +287,8 @@ public class Game implements Contract{
             }
             else{
                 executeAction(sc.nextLine());
+                printInventory();
+                System.out.println("Remaining energy:");
                 this.exhuast();
             }
         } while(playingGame);
@@ -154,7 +299,6 @@ public class Game implements Contract{
 
     public static void main(String args[]){
         Game game = new Game();
-        Item potion = new Item("Potion", "A glittering gold potion.");
         game.play();
 
     }
