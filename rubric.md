@@ -12,36 +12,36 @@ Listed below are various aspects of the assignment.  When you turn in your work,
 
 _____ 10 pts: The class meaningfully implements each of the methods in described in the `Contract` interface:
 
-      _____ `void grab(String item);`
-      _____ `String drop(String item);`
-      _____ `void examine(String item);`
-      _____ `void use(String item);`
-      _____ `boolean walk(String direction);`
-      _____ `boolean fly(int x, int y);`
-      _____ `Number shrink();`
-      _____ `Number grow();`
-      _____ `void rest();`
-      _____ `void undo();`
+      __**PART**___ `void grab(String item);`
+      ___**PART**__ `String drop(String item);`
+      __**PART**___ `void examine(String item);`
+      __**PART**___ `void use(String item);`
+      __**YES**___ `boolean walk(String direction);`
+      __**NO**___ `boolean fly(int x, int y);`
+      ___**PART**__ `Number shrink();`
+      __**PART**___ `Number grow();`
+      __**YES**___ `void rest();`
+      ___**NO**__ `void undo();`
 
 
 ## General Items:
 
-_____ 4 pts: Programs compile without errors or warnings
+___**YES**__ 4 pts: Programs compile without errors or warnings
 
-_____ 2 pts: Executes fully & consistently without crashing (exception/freeze)
+___**PART**__ 2 pts: Executes fully & consistently without crashing (exception/freeze)
 
 _____ 2 pt: Complies with style guidelines (missing items 1 pt each):
 
-      _____ Classes & class members all have Javadoc header comments
+      ___**YES**__ Classes & class members all have Javadoc header comments
 
-      _____ Clear and consistent indentation of bracketed sections
+      __**YES**___ Clear and consistent indentation of bracketed sections
 
-      _____ Adheres to Java conventions on naming & capitalization
+      ___**YES**__ Adheres to Java conventions on naming & capitalization
 
-      _____ Methods & variables all have clear and accurate names
+      ___**YES**__ Methods & variables all have clear and accurate names
 
-      _____ Methods avoid confusing side effects
+      __**PART**___ Methods avoid confusing side effects
 
-_____ 1 pt: All required files included with submission (including completed `rubric.md` file)
+__**YES**___ 1 pt: All required files included with submission (including completed `rubric.md` file)
 
-_____ 1 pt: `reflection.md` contains your reflection on the assignment, **including a detailed description of the class you implemented and what it does**
+__**YES**___ 1 pt: `reflection.md` contains your reflection on the assignment, **including a detailed description of the class you implemented and what it does**

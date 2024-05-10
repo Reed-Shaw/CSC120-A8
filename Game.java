@@ -2,6 +2,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.*;
 
+/**
+ * A class Game that holds all the player's information and the loop to run the game.
+ * @author Reed Shaw
+ * @version 5/10/2024
+ */
 public class Game implements Contract{
     //player's inventory
     protected ArrayList<Item> inventory;
@@ -18,9 +23,13 @@ public class Game implements Contract{
     //making an ArrayList of all the places
     Location forest = new Location("Forest", "A large forest. Next to you is a rusty key.", 0, 0); 
     Location desert = new Location("Desert", "An expansive desert. Next to you is a blue potion.", 0, 1);
-    Location beach = new Location("Beach", "A pretty beach. Next to you is a golden potion.", 1, 1);
+    Location beach = new Location("Beach", "A pretty beach. Next to you is a gold potion.", 1, 1);
     Location cliffs = new Location("Cliffs", "Rocky cliffs streaching as far as the eye can see. Next to you is box.", 1, 0);
     protected ArrayList<Location> places;
+    Item potionGrow = new Item("Potion", "A glittering gold potion. A note attatched to it says \"BIG CHANGES\".", true, 1);
+    Item potionShrink = new Item("Potion", "A foggy blue potion. A note attatched to it says \"little changes\".", true, 1);
+    Item wings = new Item("Wings", "Like what Icarus had, but with altitude control.", false, 0);
+    Item rustyKey = new Item("Rusty Key", "A rusty key. Maybe it goes with a box?", false, 0);
     
     public Game(){
         this.inventory = new ArrayList<Item>();
@@ -33,6 +42,21 @@ public class Game implements Contract{
         this.places.add(desert);
         this.places.add(beach);
         this.places.add(cliffs);
+        for(Location place : places){
+            if("forest".contains(place.getName())){
+                forest.addItem(rustyKey);
+                forest.getInventory();
+            }
+            if("desert".contains(place.getName())){
+                desert.addItem(potionShrink);
+            }
+            if("cliffs".contains(place.getName())){
+                cliffs.addItem(wings);
+            }
+            if("beach".contains(place.getName())){
+                beach.addItem(potionGrow);
+            }
+        }
 
         
     }
@@ -136,24 +160,52 @@ public class Game implements Contract{
         }
     }
 
+    /**
+     * A grab method that should allow the player to pick up an object that's in the player's current location
+     * and add it to their inventory. 
+     */
     public void grab(String item){
         for(Item object : currentLocation.getInventory()){
             if(item.contains("gold potion") && object == potionGrow){
-
                 this.inventory.add(object);
                 this.printInventory();
+            }
+            else{
+                System.out.println("Couldn't complete action.");
             }
         }
     }
 
-    public ArrayList<Item> printInventory(){
-        return inventory;
+    /**
+     * A method that shows the player what is in their inventory.
+     */
+    private void printInventory() {
+        System.out.println("You have the following items in your inventory:");
+        for (Item item : this.inventory) {
+            System.out.println(item.description);
+        }
     }
 
+
+    /**
+     * A method that should allow the player to drop an item from their inventory. 
+     * @param item String contianing the item that the user wants to drop.
+     * @return a String communicating either that the item was dropped or that it couldn't be dropped.
+     */
     public String drop(String item){
-        return item + " was dropped";
+        for(Item object : this.inventory){
+            if(object.getName().contains(item)){
+                this.inventory.remove(object);
+                return item + " was dropped";
+            }
+        }
+        return item + " could not be dropped.";  
     }
 
+    /**
+     * A method that should allow the player to use an item for it's intended purpose.
+     * @param item a String containing the name of the item they want to use.
+     */
     public void use(String item){
         for(Item object : this.inventory){
             if(item.contains(object.getName())){
@@ -174,6 +226,11 @@ public class Game implements Contract{
         }
     }
 
+
+    /**
+     * A method that should allow the user to examine an item in their inventory
+     * @param item a String containing the name of the item they want to use.
+     */
     public void examine(String item){
         for(Item object : this.inventory){
             if(item.contains(object.getName())){
@@ -185,11 +242,21 @@ public class Game implements Contract{
         }
     }
 
+    /**
+     * a method that should allow the user to fly. 
+     * @param x an int x containing where the user wants to go on the x-axis
+     * @param y an int y containing where the user wants to go on the y-axis
+     */
     public boolean fly(int x, int y){
 
         return true;
     }
 
+    /**
+     * a method that should allow the user to shrink. Either back to normal size or to a small size depending 
+     * on if they have grown beforehand
+     * @return a Number indicating the player's size.
+     */
     public Number shrink(){
         if(this.size == "big"){
             this.size = "medium";
@@ -203,6 +270,11 @@ public class Game implements Contract{
         }
     }
 
+     /**
+     * a method that should allow the user to grow. Either back to normal size or to a large size depending 
+     * on if they have shrunk beforehand
+     * @return a Number indicating the player's size.
+     */
     public Number grow(){
         if(this.size == "small"){
             this.size = "medium";
@@ -216,19 +288,33 @@ public class Game implements Contract{
         }
     }
 
+    /**
+     * a method that allows the user to rest and regain their energy. 
+     */
     public void rest(){
         this.energy = 11;
     }
 
+    /**
+     * a method that should allow the user to undo their last action.
+     */
     public void undo(){
         System.out.println("Literally how though.");
     }
 
+    /**
+     * a method that tires out the player
+     */
     private void exhuast(){
         this.energy -= 1;
         System.out.println(energy);
     }
 
+    /**
+     * a method that takes in what is scanned by the scanner and directs the desired action of the player to the 
+     * proper method
+     * @param action a String containing what the player wants to do.
+     */
     protected void executeAction(String action){
         if(action.contains("WALK")){
             this.walk(action);
@@ -256,26 +342,11 @@ public class Game implements Contract{
         }
     }
 
+    /**
+     * a method that runs a loop allowing the game to run.
+     */
     public void play(){
         Scanner sc = new Scanner(System.in);
-        Item potionGrow = new Item("Potion", "A glittering gold potion. A note attatched to it says \"BIG CHANGES\".", true, 1);
-        Item potionShrink = new Item("Potion", "A foggy blue potion. A note attatched to it says \"little changes\".", true, 1);
-        Item wings = new Item("Wings", "Like what Icarus had, but with altitude control.", false, 0);
-        Item rustyKey = new Item("Rusty Key", "A rusty key. Maybe it goes with a box?", false, 0);
-        for(Location place : places){
-            if("forest".contains(place.getName())){
-                place.addItem(rustyKey);
-            }
-            if("desert".contains(place.getName())){
-                place.addItem(potionShrink);
-            }
-            if("cliffs".contains(place.getName())){
-                place.addItem(wings);
-            }
-            if("beach".contains(place.getName())){
-                place.addItem(potionGrow);
-            }
-        }
         do{
             if(this.energy == 0){
                 System.out.println("You are too tired to do anything. You should REST.");
